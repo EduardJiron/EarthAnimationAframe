@@ -7,7 +7,7 @@ AFRAME.registerComponent('orbit', {
     init: function() {
         this.currentAngle = 0;
     },
-    tick: function (deltaTime) {
+    tick: function (time, deltaTime) {
         var data = this.data;
         var angleDelta = data.speed * deltaTime / 1000; 
         this.currentAngle += angleDelta;
