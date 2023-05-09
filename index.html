@@ -12,19 +12,27 @@
 <a-assets>
     <a-image id="sky" src="./starfield01.png"></a-image>
     <a-image id="clouds" src="./clouds.png"></a-image>
-    <img id="planetTexture" src="./grvt13.png" alt="Planet Texture">
+    <img id="planetTexture" src="./8k_earth_daymap.png" alt="Planet Texture">
+    <img id="atmosferaTexture" src="./8k_earth_clouds.png" alt="Planet Texture">
 </a-assets>
 
 <a-scene>
-    <a-sky src="#sky" rotation="0 0 0" id="skybox" star-rotation></a-sky>
-    <a-camera position="0 1.6 0" look-controls wasd-controls></a-camera>
+    <a-sky src="#sky" rotation="0 0 0" id="skybox" radius="8000" star-rotation></a-sky>
+    <a-camera position="100 10 30" look-controls wasd-controls></a-camera>
 
-    <a-entity id="planetGroup" orbit="radius: 200; speed: 0.005">
-        <a-sphere src="#planetTexture" radius="100" rotation="0 0 0"></a-sphere>
+    <a-entity id="planetGroup" orbit="radius: 200; speed: 0.005" position="0 0 0" >
+        <a-sphere src="#planetTexture" radius="100" rotation="0 0 0" planet-rotation ></a-sphere>
+        <a-sphere src="#atmosferaTexture" radius="103" rotation="0 0 0" material="opacity: 0.5; transparent: true"  planet-rotation ></a-sphere>
         <a-entity id="moonGroup" position="300 0 0" orbit="radius: 200; speed: 3">
-            <a-sphere id="moon" radius="30" color="gray"></a-sphere>
+            <a-sphere id="moon" radius="30" color="grey"></a-sphere>
         </a-entity>
-    </a-entity>
+        <a-entity id="sol" position="300 0 0" orbit="radius: 2000; speed: 0.50">
+            <a-sphere id="sol" radius="30" color="grey" light="type: directional; color: white"></a-sphere>
+        </a-entity>
+        </a-entity>
+
+    
+
 </a-scene>
 
 <script>
@@ -38,14 +46,15 @@
         },
         tick: function (time, deltaTime) {
             var data = this.data;
-            var angleDelta = data.speed * deltaTime / 1000; // Calcula el ángulo en función del tiempo transcurrido
+            var angleDelta = data.speed * deltaTime / 1000; 
             this.currentAngle += angleDelta;
 
             this.el.object3D.position.x = data.radius * Math.cos(this.currentAngle);
-            this.el.object3D.position.y = data.radius * Math.sin(this.currentAngle) * 1; // Agrega una componente y para el movimiento diagonal
+            this.el.object3D.position.y = data.radius * Math.sin(this.currentAngle) * 1; 
             this.el.object3D.position.z = data.radius * Math.sin(this.currentAngle);
         }
     });
+    
 
     
     AFRAME.registerComponent('star-rotation', {
@@ -66,6 +75,25 @@
     
     
     );
+    AFRAME.registerComponent('planet-rotation', {
+        init: function () {
+            var planetEl = this.el;
+            var rotationAngle = 0;
+            var rotationSpeed = 0.2; 
+
+            this.el.addEventListener('loaded', function () {
+                setInterval(function () {
+                    rotationAngle += rotationSpeed;
+                    planetEl.setAttribute('rotation', '0 ' + rotationAngle + ' 0');
+                }, 16); // Actualiza el ángulo cada 16 ms (aproximadamente 60 fps)
+            });
+        }
+    }
+    
+    
+    
+    );
+
 
     
 
